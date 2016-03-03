@@ -1,0 +1,36 @@
+
+DLM_kalman_filter <- function(stk, begin.year=1981, end.year=2011, freq=12) {
+  
+  kalman_DLM_Fun <- function(v) {
+    
+    y1=as.vector(v[1:size])
+    
+    if (all(is.na(y1))) {
+      
+      return(rep(NA, times = size))
+      
+    } else {
+      require(dlm)
+      require(zoo)
+      
+      y=na.spline(y1)
+      y.ts <- as.ts(y, start=begin.year, end=end.year, frequency = freq)
+      
+      build.1<-function(theta){
+        dlmModPoly(order=1,dV=exp(theta[1]),dW=exp(theta[2]))
+      }
+      
+      fit.1<-dlmMLE(y.ts, parm=c(1, 1), build.1)
+      updated.build <- build.1(fit.1$par)
+      kalman.Filt.model<-dlmFilter(y.ts, updated.build)
+      y.pred=as.numeric(kalman.Filt.model$m)
+      y.pred.corrected=y.pred[-(1)]
+      return(y.pred.corrected)
+    } 
+  }
+  
+  size = nlayers(stk)
+  result = calc(stk, fun=kalman_DLM_Fun)
+  return(result)
+  
+} 

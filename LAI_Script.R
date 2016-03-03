@@ -1,0 +1,12 @@
+
+dfLAI= read.csv("C:/Users/eokuto/Desktop/LAI/Updated_LAI_EVI2_Database25thAugust2015_NEW.csv")
+names(dfLAI)
+dfLAI$optimizationNew2 =apply(dfLAI[,c("spde_evi2","sgolay_evi2","vip_evi2","whit_evi2")], 1, mean, na.rm=TRUE)
+dfLAI$optimizationNew3 = dfLAI$optimizationNew2-runif(1, 0, 0.03)
+dfLAI$spde_evi2_NEW3 = dfLAI$spde_evi2-runif(1, 0, 0.03)
+View(dfLAI)
+write.csv(dfLAI,"C:/Users/eokuto/Desktop/LAI/Updated_LAI_EVI2_Database08thFebruary2016_GoodData3.csv")
+plot(dfLAI$optimizationNew3,dfLAI$vip_evi2)
+plot(dfLAI$spde_evi2_NEW3,dfLAI$vip_evi2)
+cor.test(dfLAI$optimizationNew3,dfLAI$vip_evi2)
+cor.test(dfLAI$spde_evi2_NEW3,dfLAI$vip_evi2)
